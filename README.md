@@ -1,3 +1,19 @@
+# SSI project
+
+This fork contains a Python application wrapping the vulnerable C code for a mini demo.
+
+Here is the scenario: the QEMU RISC-V linux emulator represents the victim's phone. It contains sensitive information in `/root/very_sensitive_data`. The Python application is a messaging app where users can share URLs. The application then gives a description of the URL by using some optimized, vulnerable C code. To get a URL, the victim must set up a server (`python3 server.py localhost 8080`). The attacker must connect to this server (`python3 client.py localhost 8080`, can be run on QEMU to make life easier, but maybe we could use port forwarding to run it from the host). For this demo, only the attacker can send messages to the victim. To send an URL to be processed, the attacker must send `@URL:<some_url>` with a valid URL (only alphanumeric characters and `/`). The URL is then processed by the vulnerable C code and its description should be displayed in the chat.
+
+## What should happen
+
+The C code should display a short description of the URL being processed. When the attacker sends the `out/shadow_slash.txt` payload instead, the content of `/root/very_sensitive_data` is displayed.
+
+## What happens for the moment
+
+When the attacker sends the `out/shadow_slash.txt` payload instead, the content of `/root/very_sensitive_data` is displayed. But the C code is a demo, it does nothing but executing arbitrary code. We should replace it by a vulnerable C code that is supposed to do something (display a description of the URL).
+
+# Original README below
+
 # RISC-V: #/'Alphanumeric Shellcoding
 
 ```
@@ -42,7 +58,7 @@ Then:
   - `sh launch_slash`   use Ctrl+A then X to exit
   - `cat tick.bin` (optional, to print the shellcode)
   - `sh launch_tick`   use Ctrl+A then X to exit
- 
+
 ## Building && Testing
 
 Start by cloning the repository:
@@ -86,7 +102,7 @@ Expected results:
 ### QEMU Linux shellcodes
 
 Prerequisites: A Fedora 28 Linux image running in a QEMU riscv environment (see [here](https://fedorapeople.org/groups/risc-v/disk-images/) and
-  [here](https://wiki.qemu.org/Documentation/Platforms/RISCV#Booting_64-bit_Fedora)). 
+  [here](https://wiki.qemu.org/Documentation/Platforms/RISCV#Booting_64-bit_Fedora)).
 
 - Build the shellcodes
   - `cd riscv-alphanumeric-shellcoding/fedora`
@@ -99,7 +115,7 @@ Prerequisites: A Fedora 28 Linux image running in a QEMU riscv environment (see 
         - `./vuln.bin < out/hello_hash.txt` for the 'hash' flavored shellcode
         - `./vuln.bin < out/hello_slash.txt` for the 'slash' flavored shellcode
         - `./vuln.bin < out/hello_tick.txt` for the 'tick' flavored shellcode
-    
+
 	Expected results:
           the string "Hello, world from shellcode!\n" should print on stdout
 
@@ -107,7 +123,7 @@ Prerequisites: A Fedora 28 Linux image running in a QEMU riscv environment (see 
         - `(cat out/shell_hash.txt; echo ""; cat) | ./vuln.bin` for the 'hash' flavored shellcode
         - `(cat out/shell_slash.txt; echo ""; cat) | ./vuln.bin` for the 'slash' flavored shellcode
         - `(cat out/shell_tick.txt; echo ""; cat) | ./vuln.bin` for the 'tick' flavored shellcode
-	
+
 	Expected results:
           a shell should spawn with no prompt. To test it, type any command (e.g. `id`) and press enter. To exit the shell, type exit and then press enter.
 
@@ -115,7 +131,7 @@ Prerequisites: A Fedora 28 Linux image running in a QEMU riscv environment (see 
         - `./vuln.bin < out/shadow_hash.txt` for the 'hash' flavored shellcode
         - `./vuln.bin < out/shadow_slash.txt` for the 'slash' flavored shellcode
         - `./vuln.bin < out/shadow_tick.txt` for the 'tick' flavored shellcode
-	
+
 	Expected results:
 	  the contents of the shadow file should be printed on stdout
 
@@ -123,7 +139,7 @@ Prerequisites: A Fedora 28 Linux image running in a QEMU riscv environment (see 
 
 ### HiFive Unleashed Linux shellcodes
 
-Prerequisites: 
+Prerequisites:
  - A HiFive-Unleashed board: [https://www.sifive.com/boards/hifive-unleashed](https://www.sifive.com/boards/hifive-unleashed)
  - The HiFive toolchain: [https://github.com/sifive/freedom-u-sdk](https://github.com/sifive/freedom-u-sdk)
 
