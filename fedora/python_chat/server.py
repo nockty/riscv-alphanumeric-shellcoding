@@ -30,9 +30,11 @@ def client_thread(conn, addr):
             if not is_url(msg_url):
                 broadcast(conn, f"{addr} shared an invalid URL")
                 continue
-            url_description = str(process_url(msg_url))
+            url_description = process_url(msg_url)
             broadcast(conn, f"{addr} shared an URL about:")
-            broadcast(conn, url_description)
+            for line in url_description:
+                if line:
+                    broadcast(conn, line)
 
         except Exception:
             continue

@@ -10,9 +10,9 @@ def process_url(url):
         stdout=subprocess.PIPE,
         universal_newlines=True,
     )
-    output = popen.communicate(url)
-    return output
+    output_lines = popen.communicate(url)
+    return output_lines
 
 
 def is_url(data):
-    return bool(re.match(r"^[\w\/]+$", data))
+    return bool(re.match(r"^[\w\/\.]+$", data))

@@ -5,7 +5,8 @@
 #include <string.h>
 #include <stdbool.h>
 
-#define MAX_BUFF_SIZE 976892
+// #define MAX_BUFF_SIZE 976892
+#define MAX_BUFF_SIZE 980784
 #define URL_LIMIT 300
 
 __attribute__((weak)) void describe_url(char *url)
