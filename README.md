@@ -1,16 +1,17 @@
 # SSI project
 
-This fork contains a Python application wrapping the vulnerable C code for a mini demo.
+This fork contains a Python application and a vulnerable C code for the mini demo of our SSI project.
 
-Here is the scenario: the QEMU RISC-V linux emulator represents the victim's phone. It contains sensitive information in `/root/very_sensitive_data`. The Python application is a messaging app where users can share URLs. The application then gives a description of the URL by using some optimized, vulnerable C code. To get a URL, the victim must set up a server (`python3 server.py localhost 8080`). The attacker must connect to this server (`python3 client.py localhost 8080`, can be run on QEMU to make life easier, but maybe we could use port forwarding to run it from the host). For this demo, only the attacker can send messages to the victim. To send an URL to be processed, the attacker must send `@URL:<some_url>` with a valid URL (only alphanumeric characters and `/`). The URL is then processed by the vulnerable C code and its description should be displayed in the chat.
+Our code is located in several folders:
+- `fedora/python_chat` for the Python app.
+- `fedora/main.c` for the vulnerable C code.
+- `payload/payload_linux_etc_shadow.c` for the shellcode.
 
-## What should happen
+Here is the scenario: the QEMU RISC-V linux emulator is supposed to be the victim's phone. It contains sensitive information in `/root/very_sensitive_data`. The Python application is a messaging app where users can share URLs. The application then gives a description of the URL by using some optimized, vulnerable C code. To get a URL, the victim must set up a server (`python3 server.py localhost 8080`). The attacker must connect to this server (`python3 client.py localhost 8080`, can be run on QEMU to make life easier, but we could use port forwarding to run it from the host). For this demo, only the attacker can send messages to the victim. To send an URL to be processed, the attacker must send `@URL:<some_url>` with a valid URL (only alphanumeric characters and `/` and `.`). The URL is then processed by the vulnerable C code and its description should be displayed in the chat.
 
-The C code should display a short description of the URL being processed. When the attacker sends the `out/shadow_slash.txt` payload instead, the content of `/root/very_sensitive_data` is displayed.
+## About the C code
 
-## What happens for the moment
-
-When the attacker sends the `out/shadow_slash.txt` payload instead, the content of `/root/very_sensitive_data` is displayed. But the C code is a demo, it does nothing but executing arbitrary code. We should replace it by a vulnerable C code that is supposed to do something (display a description of the URL).
+The C code should display a short description of the URL being processed. When the attacker sends the `out/shadow_slash.txt` payload instead, the content of `/root/very_sensitive_data` is displayed. The C code is coded to have the same vulnerability as the C code in the original repository.
 
 # Original README below
 
